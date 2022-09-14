@@ -14,7 +14,7 @@
 
 // module.exports = { createToken, verifyToken };
 
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import User from '../interfaces/user.interfaces';
 
 class JwtTokenHelpers {
@@ -29,9 +29,13 @@ class JwtTokenHelpers {
     return token;
   }
 
-  public verifyToken(token: string): User {
-    const data = jwt.verify(token, this.secret);
-    return data as User;
+  public verifyToken(token: string): User | JsonWebTokenError {
+    try {
+      const data = jwt.verify(token, this.secret);
+      return data as User;
+    } catch (error) {
+      return error as JsonWebTokenError;
+    }
   }
 }
 
