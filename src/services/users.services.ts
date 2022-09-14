@@ -1,6 +1,7 @@
 import connection from '../models/connection';
 import UserModel from '../models/user.model';
 import User from '../interfaces/user.interfaces';
+import UserLogin from '../interfaces/userLogin.interfaces';
 import JwtTokenHelpers from '../helpers/jwtTokenHelpers';
 
 class UserService {
@@ -22,6 +23,16 @@ class UserService {
     const userCreated = await this.model.create(user);
     const token = this.jwt.createToken(userCreated);
 
+    return token;
+  }
+
+  public async login(userLogin: UserLogin): Promise<string> {
+    const user = await this.model.getByUsernameAndPass(userLogin);
+    if (Object.keys(user).length === 0) {
+      return '401';
+    }
+
+    const token = this.jwt.createToken(user);
     return token;
   }
 }

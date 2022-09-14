@@ -19,6 +19,18 @@ class UsersController {
     const tokenUserCreated = await this.userService.create(user);
     res.status(201).json({ token: tokenUserCreated });
   };
+
+  public login = async (req: Request, res: Response) => {
+    const userLogin = req.body;
+
+    const tokenLoggedUser = await this.userService.login(userLogin);
+
+    if (tokenLoggedUser === '401') {
+      res.status(401).json({ message: 'Username or password invalid' });
+    } else {
+      res.status(200).json({ token: tokenLoggedUser });
+    }    
+  };
 }
 
 export default UsersController;
