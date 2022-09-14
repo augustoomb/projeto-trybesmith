@@ -28,7 +28,7 @@ class UserService {
 
   public async login(userLogin: UserLogin): Promise<string> {
     const user = await this.model.getByUsernameAndPass(userLogin);
-    if (Object.keys(user).length === 0) {
+    if (Object.keys(user).length === 0) { // checar se obj está vazio
       return '401';
     }
 
