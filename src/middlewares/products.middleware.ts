@@ -11,7 +11,7 @@ const schemaName = Joi.object({
     .required(),  
 });
 
-const getCodeError = (typeError:string) => {
+const getCodeError = (typeError:string):number => {
   switch (typeError) {
     case 'any.required': // campo nulo ou não informado
       return 400;
@@ -34,7 +34,6 @@ function validationCreateProduct(req: Request, res: Response, next: NextFunction
   if (schemaName.validate(product).error) {
     const errorMessage = schemaName.validate(product).error?.message;
     const typeError = schemaName.validate(product).error?.details[0].type;
-    console.log(typeError);
     const codeError = getCodeError(String(typeError));
     return res.status(codeError).json({ message: errorMessage });
   }
