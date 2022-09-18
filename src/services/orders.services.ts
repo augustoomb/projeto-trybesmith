@@ -5,6 +5,7 @@ import Order from '../interfaces/order.interfaces';
 
 import JwtTokenHelpers from '../helpers/jwtTokenHelpers';
 import ProductModel from '../models/product.model';
+import CustomOrder from '../interfaces/customOrder.interfaces';
 // import User from '../interfaces/user.interfaces';
 
 class OrderService {
@@ -30,7 +31,7 @@ class OrderService {
     return registeredOrderId;
   };
 
-  public async create(idUser: number, productsIds: number[]):Promise<any> {
+  public async create(idUser: number, productsIds: number[]):Promise<CustomOrder> {
     const orderNumber = await this.createOrder(idUser || 0); // cadastrar order e pegar orderID - OK
 
     // pegar cada produto recebido do usuário - OK
