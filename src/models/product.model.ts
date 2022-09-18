@@ -25,4 +25,11 @@ export default class ProductModel {
     
     return { id: result.insertId, ...product };
   }
+
+  public async update(productId: number, orderId: number) {
+    await this.connection.execute<ResultSetHeader>(
+      'UPDATE Trybesmith.Products SET orderId = ? WHERE (id = ?)',
+      [orderId, productId],
+    );
+  }
 }

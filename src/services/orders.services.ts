@@ -1,18 +1,22 @@
-import { JsonWebTokenError } from 'jsonwebtoken';
+// import { JsonWebTokenError } from 'jsonwebtoken';
 import connection from '../models/connection';
 import OrderModel from '../models/order.model';
 import Order from '../interfaces/order.interfaces';
 
 import JwtTokenHelpers from '../helpers/jwtTokenHelpers';
-import User from '../interfaces/user.interfaces';
+import ProductModel from '../models/product.model';
+// import User from '../interfaces/user.interfaces';
 
 class OrderService {
   public model: OrderModel;
+
+  public productModel: ProductModel;
 
   public jwtTokenHelpers: JwtTokenHelpers;
 
   constructor() {
     this.model = new OrderModel(connection);
+    this.productModel = new ProductModel(connection);
     this.jwtTokenHelpers = new JwtTokenHelpers();
   }
 
@@ -21,15 +25,26 @@ class OrderService {
     return orders;
   }
 
-  public async create(token: string):Promise<number> {
-    const user:User | JsonWebTokenError = this.jwtTokenHelpers.verifyToken(token);
-
-    if (user instanceof JsonWebTokenError || !user.id) {
-      return 0;
-    }
-
-    const registeredOrderId = this.model.create(user.id);
+  private createOrder = async (userId:number) => {
+    const registeredOrderId = await this.model.create(userId);
     return registeredOrderId;
+  };
+
+  public async create(idUser: number, productsIds: number[]):Promise<any> {
+    const orderNumber = await this.createOrder(idUser || 0); // cadastrar order e pegar orderID - OK
+
+    // pegar cada produto recebido do usuário - OK
+
+    // ir no banco e em cada produto, colocar o orderId gerado lá em cima
+    await Promise.all(
+      productsIds.map((id) => this.productModel.update(id, orderNumber)),
+    );
+
+    // retornar userId + arr de productId acima
+    return {
+      userId: idUser,
+      productsIds,
+    };
   }
 }
 
